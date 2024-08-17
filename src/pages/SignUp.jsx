@@ -4,6 +4,12 @@ import { FaEye } from "react-icons/fa";
 import { FaEyeSlash } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import OAuth from "../components/OAuth";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { auth } from "../utils/firebase";
+import { db } from "../utils/firebase";
+import { setDoc, doc, serverTimestamp } from "firebase/firestore";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 function SignUp() {
   const [formData, setFormData] = useState({
@@ -13,11 +19,32 @@ function SignUp() {
   });
   const [showPassword, setShowPassword] = useState(false);
   const { fullName, email, password } = formData;
+  const navigate = useNavigate();
   const onChange = (e) => {
     setFormData((prevState) => ({
       ...prevState,
       [e.target.id]: e.target.value,
     }));
+  };
+
+  const onSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const userCredentials = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const user = userCredentials.user;
+      updateProfile(auth.currentUser, { displayName: fullName });
+      const formDataCopy = { ...formData };
+      delete formDataCopy.password;
+      formDataCopy.timestamp = serverTimestamp();
+      await setDoc(doc(db, "users", user.uid), formDataCopy);
+      navigate("/");
+    } catch (error) {
+      toast.error(error.message);
+    }
   };
   return (
     <section>
@@ -31,7 +58,7 @@ function SignUp() {
           />
         </div>
         <div className="w-full md:w-[67%] lg:w-[40%] lg:ml-20">
-          <form>
+          <form onSubmit={onSubmit}>
             <input
               type="text"
               id="fullName"
