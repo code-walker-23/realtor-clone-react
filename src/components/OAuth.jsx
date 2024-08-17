@@ -8,7 +8,6 @@ import { db } from "../utils/firebase";
 import { getDoc } from "firebase/firestore";
 import { useNavigate } from "react-router";
 
-
 function OAuth() {
   const navigate = useNavigate();
   const onGoogleClick = async () => {
@@ -28,7 +27,7 @@ function OAuth() {
         });
         toast.success("Google Sign In Successful");
       } else {
-        toast.success("Already Signed In");
+        toast.success("Already Signed Up");
       }
       navigate("/");
     } catch (error) {
