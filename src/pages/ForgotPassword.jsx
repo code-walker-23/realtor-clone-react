@@ -1,13 +1,37 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import OAuth from "../components/OAuth";
+import { getAuth, sendPasswordResetEmail } from "firebase/auth";
+import { toast } from "react-toastify";
 
 function SignIn() {
   const [email, setEmail] = useState("");
+
   const onChange = (e) => {
     setEmail(e.target.value);
   };
+
+  const onSubmit = async (e) => {
+    e.preventDefault();
+    const auth = getAuth();
+
+    try {
+      await sendPasswordResetEmail(auth, email);
+      toast.success(
+        "Password reset email sent. Please check your email inbox."
+      );
+    } catch (error) {
+      if (error.code === "auth/user-not-found") {
+        toast.error("No account found with this email address.");
+      } else {
+        toast.error(
+          "Failed to send password reset email. Please check the email address and try again."
+        );
+      }
+      console.error("Error sending password reset email:", error);
+    }
+  };
+
   return (
     <section>
       <h1 className="text-3xl text-center mt-6 font-bold">Forgot Password</h1>
@@ -20,7 +44,7 @@ function SignIn() {
           />
         </div>
         <div className="w-full md:w-[67%] lg:w-[40%] lg:ml-20">
-          <form>
+          <form onSubmit={onSubmit}>
             <input
               type="email"
               id="email"
@@ -28,11 +52,13 @@ function SignIn() {
               value={email}
               onChange={onChange}
               placeholder="Email Address"
+              aria-label="Email Address"
+              required
             />
 
             <div className="flex justify-between whitespace-nowrap text-sm sm:text-lg">
               <p className="mb-6">
-                Don't have account?
+                Don't have an account?
                 <Link
                   to="/sign-up"
                   className="text-red-600 hover:text-red-700 transition duration-200 ease-in-out ml-1"
@@ -45,7 +71,7 @@ function SignIn() {
                   to="/sign-in"
                   className="text-blue-600 hover:text-blue-700 transition duration-200 ease-in-out ml-1"
                 >
-                  SignIn instead
+                  Sign In instead
                 </Link>
               </p>
             </div>
@@ -55,15 +81,7 @@ function SignIn() {
             >
               Send Reset Email
             </button>
-            <div
-              className="flex items-center my-4
-          before:border-t before:flex-1
-          before:border-gray-300
-          after:border-t after:flex-1
-          after:border-gray-300
-
-          "
-            >
+            <div className="flex items-center my-4 before:border-t before:flex-1 before:border-gray-300 after:border-t after:flex-1 after:border-gray-300">
               <p className="text-center font-semibold mx-4">OR</p>
             </div>
             <OAuth />
