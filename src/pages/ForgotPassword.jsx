@@ -13,9 +13,9 @@ function SignIn() {
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    const auth = getAuth();
 
     try {
+      const auth = getAuth();
       await sendPasswordResetEmail(auth, email);
       toast.success(
         "Password reset email sent. Please check your email inbox."
