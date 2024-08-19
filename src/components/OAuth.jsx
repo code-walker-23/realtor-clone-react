@@ -26,8 +26,6 @@ function OAuth() {
           timestamp: serverTimestamp(),
         });
         toast.success("Google Sign In Successful");
-      } else {
-        toast.success("Already Signed Up");
       }
       navigate("/");
     } catch (error) {
