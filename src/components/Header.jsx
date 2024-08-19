@@ -1,10 +1,23 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { LOGO } from "../utils/constant";
 import { useLocation, useNavigate } from "react-router-dom";
-
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { useState } from "react";
 const Header = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const auth = getAuth();
+  const [page, setPage] = useState("Sign In");
+
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setPage("Profile");
+      } else {
+        setPage("Sign In");
+      }
+    });
+  }, [auth]);
 
   const pathMatchRoute = (route) => location.pathname === route;
 
@@ -24,7 +37,9 @@ const Header = () => {
             <ul className="flex space-x-10">
               <li
                 className={`cursor-pointer py-3 text-sm font-semibold border-b-[3px] ${
-                  pathMatchRoute("/") ? "text-black border-b-red-500" : "text-gray-400 border-b-transparent"
+                  pathMatchRoute("/")
+                    ? "text-black border-b-red-500"
+                    : "text-gray-400 border-b-transparent"
                 }`}
                 onClick={() => navigate("/")}
               >
@@ -32,7 +47,9 @@ const Header = () => {
               </li>
               <li
                 className={`cursor-pointer py-3 text-sm font-semibold border-b-[3px] ${
-                  pathMatchRoute("/offers") ? "text-black border-b-red-500" : "text-gray-400 border-b-transparent"
+                  pathMatchRoute("/offers")
+                    ? "text-black border-b-red-500"
+                    : "text-gray-400 border-b-transparent"
                 }`}
                 onClick={() => navigate("/offers")}
               >
@@ -40,11 +57,13 @@ const Header = () => {
               </li>
               <li
                 className={`cursor-pointer py-3 text-sm font-semibold border-b-[3px] ${
-                  pathMatchRoute("/sign-in") ? "text-black border-b-red-500" : "text-gray-400 border-b-transparent"
+                  pathMatchRoute("/sign-in")
+                    ? "text-black border-b-red-500"
+                    : "text-gray-400 border-b-transparent"
                 }`}
-                onClick={() => navigate("/sign-in")}
+                onClick={() => navigate("/profile")}
               >
-                Sign In
+                {page}
               </li>
             </ul>
           </nav>
@@ -55,6 +74,3 @@ const Header = () => {
 };
 
 export default Header;
-
-
-
