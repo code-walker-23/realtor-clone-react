@@ -6,6 +6,8 @@ import { auth } from "../utils/firebase";
 import { doc } from "firebase/firestore";
 import { db } from "../utils/firebase";
 import { updateDoc } from "firebase/firestore";
+import { FcHome } from "react-icons/fc";
+import { Link } from "react-router-dom";
 
 function Profile() {
   const [name, setName] = useState(auth.currentUser.displayName || "");
@@ -93,6 +95,18 @@ function Profile() {
               </p>
             </div>
           </form>
+          <button
+            type="submit"
+            className="bg-blue-600 w-full text-white uppercase px-7 py-3 text-sm font-medium rounded shadow-md hover:bg-blue-700 hover:shadow-lg active:bg-blue-800 transition duration-300 ease-in-out"
+          >
+            <Link
+              to="/create-listing"
+              className="flex justify-center items-center"
+            >
+              <FcHome className="mr-2 text-3xl bg-red-200 rounded-full p-1 border-2" />
+              Sell or Rent your homes
+            </Link>
+          </button>
         </div>
       </section>
     </>
